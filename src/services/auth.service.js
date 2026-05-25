@@ -20,12 +20,17 @@ export async function signIn(email, password) {
     return { success: true, user: userCredential.user };
   } catch (error) {
     console.error("Login error:", error);
-    let message = "Invalid email or password.";
-    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-      message = "Invalid email or password.";
+    let message = "An error occurred during login.";
+    
+    // Firebase uses invalid-credential or wrong-password/user-not-found depending on the version and settings
+    if (error.code === 'auth/wrong-password' || (error.code === 'auth/invalid-credential' && error.message.includes('password'))) {
+      message = "Wrong password";
+    } else if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+      message = "Unauthorised access";
     } else if (error.code === 'auth/too-many-requests') {
       message = "Too many failed attempts. Please try again later.";
     }
+    
     throw new Error(message);
   }
 }

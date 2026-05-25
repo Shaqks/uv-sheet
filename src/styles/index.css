@@ -33,6 +33,7 @@ body {
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  zoom: 0.75; /* Scales the entire app to look crisp and spacious at 100% browser zoom */
 }
 
 ::-webkit-scrollbar {
