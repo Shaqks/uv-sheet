@@ -142,7 +142,7 @@ export function renderLoginPage(container, onLoginSuccess) {
         setLoading(false);
       }
     } catch (err) {
-      showError('An unexpected error occurred. Please try again.');
+      showError(err.message || 'An unexpected error occurred. Please try again.');
       setLoading(false);
     }
   });
