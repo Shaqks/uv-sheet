@@ -1,0 +1,31 @@
+/* Pages General */
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+.page-title { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+.page-subtitle { color: var(--text-secondary); font-size: 14px; }
+.page-header-actions { display: flex; gap: 12px; }
+
+/* Transaction Summary Strip */
+.transaction-summary { display: flex; justify-content: space-between; padding: 16px 24px; margin-bottom: 24px; }
+.summary-item { display: flex; flex-direction: column; }
+.summary-label { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+.summary-value { font-size: 20px; font-weight: 600; }
+
+/* Master Data Page */
+.masters-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 24px; overflow-x: auto; padding-bottom: 1px; }
+.tab-item { background: transparent; border: none; padding: 12px 20px; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 8px; font-weight: 500; font-size: 14px; transition: all 0.2s; white-space: nowrap; }
+.tab-item:hover { color: var(--text-primary); }
+.tab-item.tab-active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-count { background: var(--bg-tertiary); color: var(--text-primary); padding: 2px 8px; border-radius: 12px; font-size: 12px; }
+.tab-active .tab-count { background: var(--accent-glow); color: var(--accent); }
+
+/* Table Section */
+.table-section { flex: 1; display: flex; flex-direction: column; min-height: 400px; }
+
+/* History Table inside Modal */
+.history-table-wrapper { margin-top: 10px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.history-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.history-table th { background: var(--bg-tertiary); padding: 8px 12px; text-align: left; color: var(--text-secondary); font-weight: 500; }
+.history-table td { padding: 8px 12px; border-top: 1px solid var(--border); }
+.history-purchase td { background: rgba(16, 185, 129, 0.02); }
+.history-sale td { background: rgba(59, 130, 246, 0.02); }
+.text-right { text-align: right !important; }
