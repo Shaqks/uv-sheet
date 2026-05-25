@@ -61,6 +61,7 @@
   flex: 1;
   overflow-y: auto;
   padding: 16px 8px;
+  min-height: 0;
 }
 
 .nav-list {

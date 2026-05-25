@@ -135,8 +135,21 @@ export function createAppShell(container, { onNavigate, onLogout, currentUser })
   userEmail.textContent = user.email || '';
   userEmail.title = user.email || '';
 
+  const sidebarLogoutBtn = document.createElement('button');
+  sidebarLogoutBtn.className = 'sidebar-logout-btn btn btn-ghost';
+  sidebarLogoutBtn.innerHTML = iconMap.LogOut;
+  sidebarLogoutBtn.title = 'Log out';
+  sidebarLogoutBtn.style.marginLeft = 'auto';
+  sidebarLogoutBtn.style.padding = '4px';
+  sidebarLogoutBtn.style.color = 'var(--text-secondary)';
+  
+  sidebarLogoutBtn.addEventListener('click', () => {
+    if (typeof onLogout === 'function') onLogout();
+  });
+
   userInfo.appendChild(userAvatar);
   userInfo.appendChild(userEmail);
+  userInfo.appendChild(sidebarLogoutBtn);
   sidebar.appendChild(userInfo);
 
   // Collapse toggle
