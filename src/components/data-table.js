@@ -78,6 +78,8 @@ export function createDataTable(container, opts = {}) {
     onSelectionChange,
     emptyMessage = 'No records found',
     emptyIcon,
+    selectable = true,
+    bulkActions = [],
   } = opts;
 
   // ── Internal state ──
@@ -118,30 +120,71 @@ export function createDataTable(container, opts = {}) {
   container.innerHTML = '';
   container.appendChild(wrapper);
 
+  // Bulk actions floating bar
+  const bulkBar = document.createElement('div');
+  bulkBar.className = 'bulk-actions-bar';
+  wrapper.appendChild(bulkBar);
+
+  function updateBulkBar() {
+    if (!bulkActions || bulkActions.length === 0) return;
+    const selectedCount = selectedIds.size;
+    
+    if (selectedCount > 0) {
+      bulkBar.classList.add('bulk-actions-bar--visible');
+      bulkBar.innerHTML = \`
+        <div class="bulk-actions-info">
+          <span class="bulk-count">\${selectedCount}</span> selected
+        </div>
+        <div class="bulk-actions-buttons">
+          <button class="btn btn-ghost btn-sm" id="bulk-clear">Clear Selection</button>
+        </div>
+      \`;
+      
+      const btnContainer = bulkBar.querySelector('.bulk-actions-buttons');
+      
+      bulkActions.forEach(action => {
+        const btn = document.createElement('button');
+        btn.className = \`btn btn-sm \${action.class || 'btn-primary'}\`;
+        btn.innerHTML = action.icon ? \`\${action.icon} \${action.label}\` : action.label;
+        btn.addEventListener('click', () => {
+          action.onClick(getSelectedRows());
+        });
+        btnContainer.prepend(btn);
+      });
+      
+      bulkBar.querySelector('#bulk-clear').addEventListener('click', () => clearSelection());
+    } else {
+      bulkBar.classList.remove('bulk-actions-bar--visible');
+    }
+  }
+
   // ── Render header ──
   function renderHeader() {
     theadRow.innerHTML = '';
 
     // Checkbox column
-    const thCheck = document.createElement('th');
-    thCheck.className = 'col-checkbox';
-    thCheck.style.width = '40px';
-    const selectAllCb = document.createElement('input');
-    selectAllCb.type = 'checkbox';
-    selectAllCb.className = 'table-checkbox';
-    selectAllCb.title = 'Select all';
-    selectAllCb.addEventListener('change', () => {
-      const visible = getVisibleData();
-      if (selectAllCb.checked) {
-        visible.forEach((_, i) => selectedIds.add(pageOffset() + i));
-      } else {
-        visible.forEach((_, i) => selectedIds.delete(pageOffset() + i));
-      }
-      renderBody();
-      fireSelectionChange();
-    });
-    thCheck.appendChild(selectAllCb);
-    theadRow.appendChild(thCheck);
+    if (selectable) {
+      const thCheck = document.createElement('th');
+      thCheck.className = 'col-checkbox';
+      thCheck.style.width = '40px';
+      const selectAllCb = document.createElement('input');
+      selectAllCb.type = 'checkbox';
+      selectAllCb.className = 'table-checkbox';
+      selectAllCb.title = 'Select all';
+      selectAllCb.addEventListener('change', () => {
+        const visible = getVisibleData();
+        if (selectAllCb.checked) {
+          visible.forEach((_, i) => selectedIds.add(pageOffset() + i));
+        } else {
+          visible.forEach((_, i) => selectedIds.delete(pageOffset() + i));
+        }
+        renderBody();
+        fireSelectionChange();
+        updateBulkBar();
+      });
+      thCheck.appendChild(selectAllCb);
+      theadRow.appendChild(thCheck);
+    }
 
     columns.forEach((col) => {
       const th = document.createElement('th');
@@ -223,9 +266,11 @@ export function createDataTable(container, opts = {}) {
         const tr = document.createElement('tr');
         tr.className = 'skeleton-row';
         // checkbox placeholder
-        const tdCb = document.createElement('td');
-        tdCb.innerHTML = '<div class="skeleton skeleton-checkbox"></div>';
-        tr.appendChild(tdCb);
+        if (selectable) {
+          const tdCb = document.createElement('td');
+          tdCb.innerHTML = '<div class="skeleton skeleton-checkbox"></div>';
+          tr.appendChild(tdCb);
+        }
         columns.forEach(() => {
           const td = document.createElement('td');
           td.innerHTML = '<div class="skeleton skeleton-text"></div>';
@@ -259,26 +304,29 @@ export function createDataTable(container, opts = {}) {
       if (selectedIds.has(globalIdx)) tr.classList.add('row--selected');
 
       // Checkbox
-      const tdCb = document.createElement('td');
-      tdCb.className = 'col-checkbox';
-      const cb = document.createElement('input');
-      cb.type = 'checkbox';
-      cb.className = 'table-checkbox';
-      cb.checked = selectedIds.has(globalIdx);
-      cb.addEventListener('change', (e) => {
-        e.stopPropagation();
-        if (cb.checked) {
-          selectedIds.add(globalIdx);
-        } else {
-          selectedIds.delete(globalIdx);
-        }
-        tr.classList.toggle('row--selected', cb.checked);
-        fireSelectionChange();
-        updateSelectAll();
-      });
-      tdCb.addEventListener('click', (e) => e.stopPropagation());
-      tdCb.appendChild(cb);
-      tr.appendChild(tdCb);
+      if (selectable) {
+        const tdCb = document.createElement('td');
+        tdCb.className = 'col-checkbox';
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.className = 'table-checkbox';
+        cb.checked = selectedIds.has(globalIdx);
+        cb.addEventListener('change', (e) => {
+          e.stopPropagation();
+          if (cb.checked) {
+            selectedIds.add(globalIdx);
+          } else {
+            selectedIds.delete(globalIdx);
+          }
+          tr.classList.toggle('row--selected', cb.checked);
+          fireSelectionChange();
+          updateSelectAll();
+          updateBulkBar();
+        });
+        tdCb.addEventListener('click', (e) => e.stopPropagation());
+        tdCb.appendChild(cb);
+        tr.appendChild(tdCb);
+      }
 
       // Data cells
       columns.forEach((col) => {
@@ -436,6 +484,7 @@ export function createDataTable(container, opts = {}) {
     renderBody();
     renderFooter();
     updateSelectAll();
+    updateBulkBar();
   }
 
   // Initial render

@@ -113,6 +113,7 @@ export function renderInventoryPage(container) {
     columns,
     data: [],
     pageSize: 50,
+    selectable: false,
     onRowClick: (row) => showProductHistory(row),
     emptyMessage: 'No inventory data. Start by adding products and recording purchases.',
     emptyIcon: ICONS.stock,

@@ -202,6 +202,26 @@ function renderTable(page) {
     onRowClick: (row) => openMasterForm(row),
     onEdit: (row) => openMasterForm(row),
     onDelete: (row) => confirmDelete(row),
+    bulkActions: [
+      {
+        label: 'Delete Selected',
+        class: 'btn-danger',
+        onClick: async (rows) => {
+          if (confirm(`Are you sure you want to delete ${rows.length} selected items?\n\nThis action cannot be undone.`)) {
+            try {
+              const service = getService();
+              for (const row of rows) {
+                await service.remove(row.id);
+              }
+              showToast(`Successfully deleted ${rows.length} items`, 'success');
+              if (tableInstance) tableInstance.clearSelection();
+            } catch (err) {
+              showToast(`Error deleting some items: ${err.message}`, 'error');
+            }
+          }
+        }
+      }
+    ],
     emptyMessage: `No ${activeTab} added yet. Click "Add ${getTabLabel()}" to get started.`,
     emptyIcon: TABS.find(t => t.id === activeTab)?.icon || '',
   });

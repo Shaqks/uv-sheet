@@ -132,6 +132,25 @@ export function renderBuyingPage(container) {
     onRowClick: (row) => openPurchaseForm(row),
     onEdit: (row) => openPurchaseForm(row),
     onDelete: (row) => confirmDelete(row),
+    bulkActions: [
+      {
+        label: 'Delete Selected',
+        class: 'btn-danger',
+        onClick: async (rows) => {
+          if (confirm(`Are you sure you want to delete ${rows.length} selected purchases?\n\nThis action cannot be undone.`)) {
+            try {
+              for (const row of rows) {
+                await PurchaseService.remove(row.firebaseId || row.id);
+              }
+              showToast(`Successfully deleted ${rows.length} purchases`, 'success');
+              if (tableInstance) tableInstance.clearSelection();
+            } catch (err) {
+              showToast(`Error deleting some purchases: ${err.message}`, 'error');
+            }
+          }
+        }
+      }
+    ],
     emptyMessage: 'No purchases recorded yet',
     emptyIcon: `<svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>`,
   });

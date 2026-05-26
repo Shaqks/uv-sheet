@@ -131,6 +131,25 @@ export function renderSellingPage(container) {
     onRowClick: (row) => openSaleForm(row),
     onEdit: (row) => openSaleForm(row),
     onDelete: (row) => confirmDelete(row),
+    bulkActions: [
+      {
+        label: 'Delete Selected',
+        class: 'btn-danger',
+        onClick: async (rows) => {
+          if (confirm(`Are you sure you want to delete ${rows.length} selected sales?\n\nThis action cannot be undone.`)) {
+            try {
+              for (const row of rows) {
+                await SaleService.remove(row.firebaseId || row.id);
+              }
+              showToast(`Successfully deleted ${rows.length} sales`, 'success');
+              if (tableInstance) tableInstance.clearSelection();
+            } catch (err) {
+              showToast(`Error deleting some sales: ${err.message}`, 'error');
+            }
+          }
+        }
+      }
+    ],
     emptyMessage: 'No sales recorded yet',
     emptyIcon: `<svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`,
   });
