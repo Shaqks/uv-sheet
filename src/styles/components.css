@@ -160,13 +160,13 @@
 
 /* Bulk Actions Bar */
 .bulk-actions-bar {
-  position: absolute;
+  position: fixed;
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%) translateY(20px);
   background: var(--bg-glass);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 12px 24px;
   border-radius: 100px;
   display: flex;
@@ -176,7 +176,35 @@
   opacity: 0;
   pointer-events: none;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 50;
+  z-index: 9999;
+  width: max-content;
+  max-width: 90vw;
+}
+
+@media (max-width: 600px) {
+  .bulk-actions-bar {
+    flex-direction: column;
+    border-radius: 16px;
+    gap: 16px;
+    padding: 16px;
+    bottom: 16px;
+  }
+}
+
+/* Sticky Actions Column */
+.data-table .col-actions {
+  position: sticky;
+  right: 0;
+  background: var(--bg-secondary);
+  box-shadow: -4px 0 12px rgba(0,0,0,0.1);
+  z-index: 2;
+}
+.data-table th.col-actions {
+  background: var(--bg-tertiary);
+  z-index: 12;
+}
+.data-table tbody tr:hover .col-actions {
+  background: var(--bg-tertiary);
 }
 .bulk-actions-bar--visible {
   transform: translateX(-50%) translateY(0);
