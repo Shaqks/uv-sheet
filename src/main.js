@@ -14,6 +14,11 @@ import './styles/auth.css';
 
 // Services
 import { onAuthChanged, signOutUser } from './services/auth.service.js';
+import { ProductService } from './services/product.service.js';
+import { PurchaseService } from './services/purchase.service.js';
+import { SaleService } from './services/sale.service.js';
+import { CategoryService } from './services/category.service.js';
+import { SupplierService } from './services/supplier.service.js';
 
 // Components
 import { createAppShell } from './components/app-shell.js';
