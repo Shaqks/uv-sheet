@@ -15,6 +15,7 @@ class SaleServiceImpl {
 
   init() {
     if (!db) return;
+    if (this.unsubscribe) this.unsubscribe();
     const q = query(collection(db, this.collectionName), orderBy('createdAt', 'desc'));
     this.unsubscribe = onSnapshot(q, (snapshot) => {
       this.data = snapshot.docs.map(doc => {

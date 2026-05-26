@@ -15,10 +15,13 @@ class ProductServiceImpl {
 
   init() {
     if (!db) return;
+    if (this.unsubscribe) this.unsubscribe();
     const q = query(collection(db, this.collectionName), orderBy('id'));
     this.unsubscribe = onSnapshot(q, (snapshot) => {
       this.products = snapshot.docs.map(doc => ({ firebaseId: doc.id, ...doc.data() }));
       this.notifySubscribers();
+    }, (error) => {
+      console.warn("ProductService listener error (likely auth timing):", error.code);
     });
   }
 

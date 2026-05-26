@@ -84,6 +84,13 @@ function init() {
   // Listen for auth state changes
   onAuthChanged((user) => {
     if (user) {
+      // User is signed in — restart listeners to fetch data using the valid auth token
+      ProductService.init();
+      PurchaseService.init();
+      SaleService.init();
+      CategoryService.init();
+      SupplierService.init();
+
       // User is signed in — show the app
       renderApp(user);
     } else {

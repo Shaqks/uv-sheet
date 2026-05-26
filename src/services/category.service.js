@@ -13,16 +13,13 @@ class CategoryServiceImpl {
   }
 
   init() {
-    if (!db) {
-      this.categories = DEFAULT_CATEGORIES.map(name => ({ id: generateUID(), name, createdAt: new Date() }));
-      return;
-    }
-
-    const q = query(collection(db, this.collectionName), orderBy('name'));
+    if (!db) return;
+    if (this.unsubscribe) this.unsubscribe();
+    const q = query(collection(db, this.collectionName));
     this.unsubscribe = onSnapshot(q, (snapshot) => {
       this.categories = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       this.notifySubscribers();
-    });
+    }, (error) => console.warn("CategoryService listener error:", error.code));
   }
 
   subscribe(callback) {

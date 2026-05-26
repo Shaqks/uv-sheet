@@ -15,11 +15,12 @@ class SupplierServiceImpl {
 
   init() {
     if (!db) return;
-    const q = query(collection(db, this.collectionName), orderBy('name'));
+    if (this.unsubscribe) this.unsubscribe();
+    const q = query(collection(db, this.collectionName));
     this.unsubscribe = onSnapshot(q, (snapshot) => {
       this.data = snapshot.docs.map(doc => ({ firebaseId: doc.id, ...doc.data() }));
       this.notifySubscribers();
-    });
+    }, (error) => console.warn("SupplierService listener error:", error.code));
   }
 
   subscribe(callback) {
